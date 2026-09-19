@@ -1,6 +1,6 @@
 -- Sample data for blogdb
 -- Run this AFTER creating the users and posts tables (schema.sql)
-USE blogdb;
+-- USE blogdb
 
 INSERT INTO users (id, username, email, password, created_at) VALUES
 (1, 'noahokafor1', 'noahokafor1@example.com', 'hashed_pw_001', '2025-12-09 07:14:00'),
