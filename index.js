@@ -89,5 +89,46 @@ app.delete('/posts/:id', async (req, res) => {
   res.json({ message: 'Post deleted' });
 });
 
+// Register a user (with validation)
+app.post('/users', async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'username, email, and password are all required' });
+  }
+  if (!email.includes('@')) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+
+  try {
+    const [result] = await pool.query(
+      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+      [username, email, password]
+    );
+    res.status(201).json({ id: result.insertId, username, email });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Create a post (with validation)
+app.post('/posts', async (req, res) => {
+  const { user_id, title, content } = req.body;
+
+  if (!user_id || !title || !content) {
+    return res.status(400).json({ error: 'user_id, title, and content are all required' });
+  }
+
+  try {
+    const [result] = await pool.query(
+      'INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)',
+      [user_id, title, content]
+    );
+    res.status(201).json({ id: result.insertId, user_id, title, content });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
